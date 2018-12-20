@@ -2,12 +2,37 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as fs from 'fs';
 import chaiAsPromised from 'chai-as-promised';
-import { parseTngContents, parseTngFile } from '../../src/tng/parse-tng';
+import sinonChai from 'sinon-chai';
+// import { parseTngContents, parseTngFile } from '../../src/tng/parse-tng';
 import { Thing } from '../../src/tng/tng.model';
+import * as proxyquire from 'proxyquire';
 const expect = chai.expect;
 chai.should();
 chai.use(chaiAsPromised as any);
+chai.use(sinonChai);
+
+const mockedDeps = {
+    fs: {
+        readFile: sinon.stub()
+    }
+};
+const { parseTngContents, parseTngFile } = proxyquire
+    .noCallThru()
+    .load('../../src/tng/parse-tng', mockedDeps);
+
 describe('tng processor', function () {
+    let mockError: any, mockBuffer: any;
+    let expThings: Thing[];
+    beforeEach(function () {
+        mockedDeps.fs.readFile.callsFake(function (file, callback) {
+            console.log("in sinon stub");
+            callback(mockError, mockBuffer);
+        });
+        expThings = parseTngContents(TNGBUF);
+        mockError = null;
+        mockBuffer = TNGBUF;
+    });
+
     describe('parser', function () {
         let things: Thing[];
         beforeEach(function () {
@@ -21,23 +46,8 @@ describe('tng processor', function () {
             things[0].ScriptData.indexOf('"').should.equal(-1);
         });
     });
+
     describe('file opener', function () {
-        let readFileStub: sinon.SinonStub;
-        let expThings: Thing[];
-        let mockError: any, mockBuffer: any;
-        beforeEach(function() {
-            readFileStub = sinon.stub(fs, 'readFile');
-            readFileStub.callsFake(function (file, callback) {
-                console.log("in sinon stub");
-                callback(mockError, mockBuffer);
-            });
-            expThings = parseTngContents(TNGBUF);
-            mockError = null;
-            mockBuffer = TNGBUF;
-        });
-        afterEach(function() {
-            readFileStub.restore();
-        });
         it('returns a bunch of things', function () {
             return parseTngFile('foo').should.eventually.deep.equal(expThings);
         });
@@ -49,7 +59,7 @@ describe('tng processor', function () {
 });
 
 
-const TNGBUF: Buffer = new Buffer(`Version 2;
+const TNGBUF: Buffer = Buffer.from(`Version 2;
 
 XXXSectionStart NULL;
 

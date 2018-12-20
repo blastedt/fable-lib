@@ -54,19 +54,25 @@ export async function parseAllTngs(directory: string): Promise<ThingMap> {
         promiseMap[path.basename(file)] = parseTngFile(file);
     }
     const thingMap: ThingMap = {};
+    const max = filenames.length;
+    let current = 0;
     for (const file of filenames) {
         const base = path.basename(file);
         thingMap[base] = await promiseMap[base];
+        console.log(`${++current}/${max}`);
     }
+    console.log(`Parsed ${Object.keys(thingMap).length} files`);
     return thingMap;
 }
 
 export function mappedRegionEntrancesExits(map: ThingMap) {
+    const exits = {};
     for (const key in map) {
         if (Object.hasOwnProperty.call(map, key) && map[key]) {
-            map[key] = map[key].filter(
+            exits[key] = map[key].filter(
                 tng => tng.DefinitionType && tng.DefinitionType.includes("REGION")
             );
         }
     }
+    return exits;
 }

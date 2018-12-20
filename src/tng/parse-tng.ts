@@ -14,7 +14,7 @@ export function parseTngContents(contents: Buffer): Thing[] {
     let things: Thing[] = [];
     for (const line of lines) {
         if (line.indexOf(TNG_FILE_TOKENS.NEWTHING) > -1) {
-            things.unshift({});
+            things.unshift({} as Thing);
         } else if (things.length > 0 && line.indexOf(TNG_FILE_TOKENS.ENDTHING) === -1) {
             const [key, value] = line.replace(/[;"]/g, '').split(' ');
             things[0][key] = value;
@@ -63,16 +63,4 @@ export async function parseAllTngs(directory: string): Promise<ThingMap> {
     }
     console.log(`Parsed ${Object.keys(thingMap).length} files`);
     return thingMap;
-}
-
-export function mappedRegionEntrancesExits(map: ThingMap) {
-    const exits = {};
-    for (const key in map) {
-        if (Object.hasOwnProperty.call(map, key) && map[key]) {
-            exits[key] = map[key].filter(
-                tng => tng.DefinitionType && tng.DefinitionType.includes("REGION")
-            );
-        }
-    }
-    return exits;
 }

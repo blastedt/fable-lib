@@ -54,6 +54,7 @@ export async function parseAllTngs(directory: string): Promise<ThingMap> {
         promiseMap[path.basename(file)] = parseTngFile(file);
     }
     const thingMap: ThingMap = {};
+<<<<<<< HEAD
     const max = filenames.length;
     let current = 0;
     for (const file of filenames) {
@@ -62,17 +63,32 @@ export async function parseAllTngs(directory: string): Promise<ThingMap> {
         console.log(`${++current}/${max}`);
     }
     console.log(`Parsed ${Object.keys(thingMap).length} files`);
+=======
+    for (const file of filenames) {
+        const base = path.basename(file);
+        thingMap[base] = await promiseMap[base];
+    }
+>>>>>>> 6053d171247309cc67b685206584e3823d46f331
     return thingMap;
 }
 
 export function mappedRegionEntrancesExits(map: ThingMap) {
+<<<<<<< HEAD
     const exits = {};
     for (const key in map) {
         if (Object.hasOwnProperty.call(map, key) && map[key]) {
             exits[key] = map[key].filter(
+=======
+    for (const key in map) {
+        if (Object.hasOwnProperty.call(map, key) && map[key]) {
+            map[key] = map[key].filter(
+>>>>>>> 6053d171247309cc67b685206584e3823d46f331
                 tng => tng.DefinitionType && tng.DefinitionType.includes("REGION")
             );
         }
     }
+<<<<<<< HEAD
     return exits;
+=======
+>>>>>>> 6053d171247309cc67b685206584e3823d46f331
 }

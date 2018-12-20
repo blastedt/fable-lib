@@ -17,3 +17,7 @@ export enum TNG_FILE_TOKENS {
     NEWTHING = "NewThing",
     ENDTHING = "EndThing"
 }
+
+export interface ThingMap {
+    [filename: string]: Thing[]
+}

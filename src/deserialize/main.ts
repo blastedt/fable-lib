@@ -1,0 +1,1 @@
+export { deserializeThing, deserializeThingDirectory } from './thing';

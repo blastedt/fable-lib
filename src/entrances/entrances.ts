@@ -1,5 +1,5 @@
 import { Entrance, THING_ENTRANCE_TYPE } from "./entrances.model";
-import { ThingMap, Thing } from "../tng/tng.model";
+import { ThingMap, Thing } from "../models/thing.model";
 import bigInt from 'big-integer';
 
 export function getEntrances(map: ThingMap): Entrance[] {

@@ -15,7 +15,9 @@ export enum InterestingDefinitionTypes {
 
 export enum TNG_FILE_TOKENS {
     NEWTHING = "NewThing",
-    ENDTHING = "EndThing"
+    ENDTHING = "EndThing",
+    NEWSECTION = "XXXSectionStart",
+    ENDSECTION = "XXXSectionEnd"
 }
 
 export interface ThingMap {

@@ -1,39 +1,12 @@
-import glob from 'glob';
 import * as fs from 'fs';
-import {
-    Thing,
-    TNG_FILE_TOKENS,
-    CTCDRegionExit,
-    ThingDirectory,
-    ThingFile,
-    CTC_TOKENS
-} from '../models/thing.model';
-import * as path from 'path';
+import glob from 'glob';
 import * as os from 'os';
+import * as path from 'path';
+import { CTCDRegionExit, CTC_TOKENS, Thing, ThingDirectory, ThingFile, TNG_FILE_TOKENS } from '../models/thing.model';
+import { grabSubsectionFromLines } from '../util/grab-subsections';
 
 
-function grabSubsectionFromLines(lines: string[], header: string, footer: string): null | { headerTokens: string[], footerTokens: string[], sectionLines: string[], remainingLines: string[], discardedLines: string[] } {
-    const headerIndex = lines.findIndex(line => line.includes(header));
-    if (headerIndex === -1) {
-        return null;
-    }
-    const headerTokens = lines[headerIndex].split(' ');
-    const footerIndex = lines.findIndex(line => line.includes(footer));
-    if (footerIndex === -1) {
-        return null;
-    }
-    const footerTokens = lines[footerIndex].split(' ');
-    const sectionLines = lines.slice(headerIndex + 1, footerIndex);
-    const remainingLines = lines.slice(footerIndex + 1);
-    const discardedLines = lines.slice(0, headerIndex);
-    return {
-        headerTokens,
-        footerTokens,
-        sectionLines: sectionLines,
-        remainingLines: remainingLines,
-        discardedLines
-    }
-}
+
 
 
 /**

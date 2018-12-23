@@ -1,1 +1,1 @@
-export { deserializeThing, deserializeThingDirectory } from './thing';
+export { deserializeThingFile as deserializeThing, deserializeThingDirectory } from './thing';

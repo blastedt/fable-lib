@@ -4,8 +4,9 @@ import { grabSubsectionFromLines } from '../../dist/util/grab-subsections';
 
 chai.should();
 chai.use(cap);
+const expect = chai.expect;
 
-describe.only('grabbing subsections', function () {
+describe('grabbing subsections', function () {
 
     describe('happy path', function () {
         const beforeLines = ['0', '1'];
@@ -47,6 +48,59 @@ describe.only('grabbing subsections', function () {
         });
         it('does not mutate the original array', function () {
             lines.should.deep.equal(expLinesNoMutate);
+        });
+    });
+
+    describe('no header present', function () {
+        const lines = [
+            'A',
+            'B',
+            'C',
+            'XXXSectionEnd',
+            'D'
+        ];
+        const linesCopy = [
+            'A',
+            'B',
+            'C',
+            'XXXSectionEnd',
+            'D'
+        ];
+        let res;
+        beforeEach(function () {
+            res = grabSubsectionFromLines(lines, 'XXXSectionStart', 'XXXSectionEnd');
+        });
+        it('returns null', function () {
+            expect(res).to.equal(null);
+        });
+        it('does not mutate the line array', function () {
+            lines.should.deep.equal(linesCopy, 'input array mutated');
+        });
+    });
+    describe('no footer present', function () {
+        const lines = [
+            'A',
+            'XXXSectionStart',
+            'B',
+            'C',
+            'D'
+        ];
+        const linesCopy = [
+            'A',
+            'XXXSectionStart',
+            'B',
+            'C',
+            'D'
+        ];
+        let res;
+        beforeEach(function () {
+            res = grabSubsectionFromLines(lines, 'XXXSectionStart', 'XXXSectionEnd');
+        });
+        it('returns null', function () {
+            expect(res).to.equal(null);
+        });
+        it('does not mutate the line array', function () {
+            lines.should.deep.equal(linesCopy, 'input array mutated');
         });
     });
 });

@@ -1,5 +1,6 @@
 import { Entrance, THING_ENTRANCE_TYPE } from "./entrances.model";
 import { ThingMap, Thing } from "../tng/tng.model";
+import bigInt from 'big-integer';
 
 export function getEntrances(map: ThingMap): Entrance[] {
     const exits: ThingMap = mappedRegionEntrancesExits(map);
@@ -10,7 +11,7 @@ export function getEntrances(map: ThingMap): Entrance[] {
             fileThings.map(function (thing) {
                 if (thing.DefinitionType === THING_ENTRANCE_TYPE.ENTRANCE) {
                     handleEntrance(thing, entrances, file);
-                } else if (thing.DefinitionType === THING_ENTRANCE_TYPE.EXIT) {
+                } else if (thing.EntranceConnectedToUID) {
                     handleExit(thing, entrances, file);
                 }
             });
@@ -20,28 +21,33 @@ export function getEntrances(map: ThingMap): Entrance[] {
 }
 //mutates
 function handleExit(thing: Thing, entrances: Entrance[], file: string): void {
-    const assocEntrance: Entrance | undefined = entrances.find(e => e.entranceUID == thing.EntranceConnectedToUID);
+    const assocEntrance: Entrance | undefined = entrances.find(e => e.entranceUID == getObjectIdFromConnectiveUID(thing.EntranceConnectedToUID));
+    const newInfo: Entrance = {
+        exitRegion: file,
+        exitUID: thing.UID,
+        exitTargetsConnectiveUID: thing.EntranceConnectedToUID,
+        exitTargetsMaskedUID: maskUID(thing.EntranceConnectedToUID),
+        exitTargetsMapID: getMapIdFromConnectiveUID(thing.EntranceConnectedToUID),
+        exitTargetsProbableUID: getObjectIdFromConnectiveUID(thing.EntranceConnectedToUID)
+    } as Entrance;
     if (assocEntrance) {
-        assocEntrance.exitRegion = file;
-        assocEntrance.exitUID = thing.UID;
+        Object.assign(assocEntrance, newInfo);
     } else {
-        entrances.push({
-            exitRegion: file,
-            exitUID: thing.UID,
-            entranceUID: thing.EntranceConnectedToUID
-        } as Entrance);
+        entrances.push(newInfo);
     }
 }
 //mutates 
 function handleEntrance(thing: Thing, entrances: Entrance[], file: string): void {
-        const assocEntrance: Entrance | undefined = entrances.find(e => e.entranceUID == thing.UID);
+        const assocEntrance: Entrance | undefined = entrances.find(e => e.exitTargetsProbableUID == thing.UID);
+        const newInfo: Entrance = {
+            enteringRegion: file,
+            entranceUID: thing.UID,
+            entranceMaskedUID: maskUID(thing.UID)
+        } as Entrance;
         if (assocEntrance) {
-            assocEntrance.enteringRegion = file;
+            Object.assign(assocEntrance, newInfo);
         } else {
-            entrances.push({
-                enteringRegion: file,
-                entranceUID: thing.UID
-            } as Entrance);
+            entrances.push(newInfo);
         }
 
 }
@@ -56,4 +62,19 @@ export function mappedRegionEntrancesExits(map: ThingMap) {
         }
     }
     return exits;
+}
+
+function getMapIdFromConnectiveUID(uid: string | undefined) {
+    if (!uid) return uid;
+    return bigInt(uid).and(bigInt("FFFFFF0000000000", bigInt(16))).toString();
+}
+
+function getObjectIdFromConnectiveUID(uid: string | undefined) {
+    if (!uid) return undefined;
+    return bigInt(uid).and(bigInt("000000FFFFFFFFFF", 16)).or(bigInt("FFFFFE0000000000", 16)).toString();
+}
+
+function maskUID(uid: string | undefined) {
+    if (!uid) return uid;
+    return bigInt(uid).and(bigInt("000000FFFFFFFFFF", 16)).toString();
 }

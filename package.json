@@ -16,6 +16,7 @@
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/blastedt/fable-lib#readme",
   "devDependencies": {
+    "@types/big-integer": "0.0.31",
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/glob": "^7.1.1",
@@ -34,7 +35,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
-    "big-number": "^2.0.0",
+    "big-integer": "^1.6.40",
     "glob": "^7.1.3",
     "progress": "^2.0.3"
   }

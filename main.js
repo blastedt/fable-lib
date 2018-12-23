@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const {
-    parseAllTngs
-} = require('./dist/tng/parse-tng');
+    deserializeThingDirectory
+} = require('./dist/deserialize/thing');
 const { getEntrances } = require('./dist/entrances/entrances');
 
-parseAllTngs(path.resolve('./levels-dirty'))
+deserializeThingDirectory(path.resolve('./levels-dirty'))
     .then(function (things) {
         console.log('done parsing');
         const entrances = getEntrances(things);

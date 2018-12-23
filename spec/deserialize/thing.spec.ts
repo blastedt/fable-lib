@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
 // import { parseTngContents, parseTngFile } from '../../src/tng/parse-tng';
-import { Thing } from '../../src/tng/tng.model';
+import { Thing } from '../../src/models/tng.model';
 import * as proxyquire from 'proxyquire';
 const expect = chai.expect;
 chai.should();
@@ -16,16 +16,15 @@ const mockedDeps = {
         readFile: sinon.stub()
     }
 };
-const { parseTngContents, parseTngFile } = proxyquire
+const { parseTngContents, deserializeThing } = proxyquire
     .noCallThru()
-    .load('../../src/tng/parse-tng', mockedDeps);
+    .load('../../src/deserialize/thing', mockedDeps);
 
 describe('tng processor', function () {
     let mockError: any, mockBuffer: any;
     let expThings: Thing[];
     beforeEach(function () {
         mockedDeps.fs.readFile.callsFake(function (file, callback) {
-            console.log("in sinon stub");
             callback(mockError, mockBuffer);
         });
         expThings = parseTngContents(TNGBUF);
@@ -49,11 +48,11 @@ describe('tng processor', function () {
 
     describe('file opener', function () {
         it('returns a bunch of things', function () {
-            return parseTngFile('foo').should.eventually.deep.equal(expThings);
+            return deserializeThing('foo').should.eventually.deep.equal(expThings);
         });
         it('errors out', function () {
             mockError = "Whoops!";
-            return parseTngFile('foo').should.be.rejected;
+            return deserializeThing('foo').should.be.rejected;
         })
     });
 });

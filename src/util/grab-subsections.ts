@@ -1,10 +1,16 @@
-export function grabSubsectionFromLines(lines: string[], header: string, footer: string): null | { headerTokens: string[], footerTokens: string[], sectionLines: string[], remainingLines: string[] } {
+export function grabSubsectionFromLines(lines: string[], header: string, footer: string): null | { headerTokens: string[], footerTokens: string[], sectionLines: string[], remainingLines: string[] };
+export function grabSubsectionFromLines(lines: string[], header: string): null | { headerTokens: string[], footerTokens: string[], sectionLines: string[], remainingLines: string[] };
+
+export function grabSubsectionFromLines(lines: string[], header: string, footer?: string): null | { headerTokens: string[], footerTokens: string[], sectionLines: string[], remainingLines: string[] } {
     const headerIndex = lines.findIndex(line => line.includes(header));
     if (headerIndex === -1) {
         return null;
     }
     const headerTokens = lines[headerIndex].split(' ');
-    const footerIndex = lines.findIndex(line => line.includes(footer));
+    if (!footer) {
+        footer = headerTokens[0].replace("Start", "End");
+    }
+    const footerIndex = lines.findIndex(line => line.includes(footer!));
     if (footerIndex === -1) {
         return null;
     }

@@ -1,7 +1,8 @@
-import { Section } from "./Section";
 import * as fs from 'fs';
+import * as os from 'os';
 import { TNG_FILE_TOKENS } from "../models/thing.model";
 import { grabSubsectionFromLines } from "../util/grab-subsections";
+import { Section } from "./Section";
 
 export class ThingFile {
     public sections: Section[];
@@ -38,6 +39,15 @@ export class ThingFile {
         }
         return new ThingFile(sections, remainingLines);
 
+    }
+
+    serialize(): string {
+        const serializedSections = this.sections.map(sec => sec.serialize());
+        return [
+            `Version 2;`,
+            ``,
+            ...serializedSections
+        ].join(os.EOL) + os.EOL;
     }
 
     constructor(sections: Section[], unparsedLines: string[]) {

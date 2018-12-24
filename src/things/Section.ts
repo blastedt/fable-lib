@@ -1,7 +1,7 @@
 import { TNG_FILE_TOKENS } from "../models/thing.model";
 import { grabSubsectionFromLines } from "../util/grab-subsections";
-import { parseThing } from "../deserialize/thing";
 import { Thing } from "./Thing";
+import * as os from 'os';
 
 export class Section {
     public things: Thing[];
@@ -22,6 +22,15 @@ export class Section {
             res.push(Thing.deserialize(sectionLines));
         }
         return new Section(res, quest || null);
+    }
+
+    public serialize(): string {
+        const serializedThings = this.things.map(thing => thing.serialize());
+        return [
+            `${TNG_FILE_TOKENS.NEWSECTION} ${this.quest || "NULL"};`,
+            ...serializedThings,
+            `${TNG_FILE_TOKENS.ENDSECTION};`
+        ].join(os.EOL) + os.EOL;
     }
 
     constructor(things: Thing[], quest: string | null) {

@@ -21,7 +21,7 @@ const { Section } = proxyquire
     .noCallThru()
     .load('../../src/things/Section', mockedDeps);
 
-describe.only('Section deserialization', function () {
+describe('Section deserialization', function () {
     it('doesn\'t break with empty sections', function () {
         const inputLines = ['XXXSectionStart QUEST;', 'XXXSectionEnd;'];
         const actual = Section.deserialize(inputLines);

@@ -12,18 +12,20 @@ describe('grabbing subsections', function () {
         const beforeLines = ['0', '1'];
         const midLines = ['A', 'B', 'C'];
         const afterLines = ['D', 'E'];
+        const headerLine = 'XXXSectionStart Quest';
+        const footerLine = 'XXXSectionEnd Quest';
         const lines = [
             ...beforeLines,
-            'XXXSectionStart Quest',
+            headerLine,
             ...midLines,
-            'XXXSectionEnd Quest',
+            footerLine,
             ...afterLines,
         ];
         const expLinesNoMutate = [
             ...beforeLines,
-            'XXXSectionStart Quest',
+            headerLine,
             ...midLines,
-            'XXXSectionEnd Quest',
+            footerLine,
             ...afterLines,
         ];
         let headerTokens, footerTokens, sectionLines, remainingLines;
@@ -41,7 +43,7 @@ describe('grabbing subsections', function () {
             footerTokens.should.deep.equal(['XXXSectionEnd', 'Quest']);
         });
         it('gets sectionLines', function () {
-            sectionLines.should.deep.equal(midLines);
+            sectionLines.should.deep.equal([headerLine, ...midLines, footerLine]);
         });
         it('gets remaining lines with section removed', function () {
             remainingLines.should.deep.equal([...beforeLines, ...afterLines]);

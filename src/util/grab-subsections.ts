@@ -9,7 +9,7 @@ export function grabSubsectionFromLines(lines: string[], header: string, footer:
         return null;
     }
     const footerTokens = lines[footerIndex].split(' ');
-    const sectionLines = lines.slice(headerIndex + 1, footerIndex);
+    const sectionLines = lines.slice(headerIndex, footerIndex + 1);
     const remainingLines = lines.slice(0, headerIndex)
         .concat(lines.slice(footerIndex + 1));
     return {

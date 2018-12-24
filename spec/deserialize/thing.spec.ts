@@ -8,7 +8,7 @@ import { Thing } from '../../src/models/thing.model';
 import * as proxyquire from 'proxyquire';
 const expect = chai.expect;
 chai.should();
-chai.use(chaiAsPromised as any);
+chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 const mockedDeps = {

@@ -105,5 +105,26 @@ export class Thing {
             `${TNG_FILE_TOKENS.ENDTHING};`
         ].join(os.EOL) + os.EOL;
     }
+
+    getExit(): UID | null {
+        let res = false;
+        for (const CTCtype in this.CTCs) {
+            if ((this.CTCs[CTCtype] as any).EntranceConnectedToUID) {
+                console.log("Found exit, adding");
+                return (this.CTCs[CTCtype] as any).EntranceConnectedToUID;
+            }
+        }
+        return null;
+    }
+
+    setExit(target: UID): boolean {
+        for (const CTCtype in this.CTCs) {
+            if (!!(this.CTCs[CTCtype] as any).EntranceConnectedToUID) {
+                (this.CTCs[CTCtype] as any).EntranceConnectedToUID = target.connectiveUID;
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -r ts-node/register spec",
-    "tdd": "mocha -w --watch-extensions ts -r ts-node/register spec/**/*ts"
+    "tdd": "mocha -w --watch-extensions ts -r ts-node/register spec/**/*ts",
+    "build": "tsc",
+    "run": "ts-node main.ts"
   },
   "repository": {
     "type": "git",

@@ -15,9 +15,9 @@ export function fetchAllCUIDs(files: ThingPathMap): UID[] {
         console.log(`Searching ${path.basename(file)} for exits`);
         for (const section of files[file].sections) {
             section.things.forEach(function (thing) {
-                const exit: CTCDRegionExit = thing.CTCs["StartCTCDRegionExit;"] as CTCDRegionExit;
+                const exit: UID | null = thing.getExit();
                 if (exit) {
-                    CUIDs.push(exit.EntranceConnectedToUID);
+                    CUIDs.push(exit);
                 }
             });
         }
@@ -75,9 +75,10 @@ export function randomizeConnectiveUIDs(files: ThingPathMap, cuids: UID[]) {
         console.log(`Assigning ${path.basename(file)} new exits`);
         for (const section of files[file].sections) {
             section.things.forEach(function (thing) {
-                const exit: CTCDRegionExit = thing.CTCs["StartCTCDRegionExit;"] as CTCDRegionExit;
-                if (exit) {
-                    exit.EntranceConnectedToUID = new UID(UIDType.CONNECTIVE, cuids.pop()!.connectiveUID);
+                if (thing.getExit()) {
+                    const newExit = cuids.pop()!;
+                    console.log("Setting to CUID " + newExit.connectiveUID);
+                    thing.setExit(newExit);
                 }
             });
         }

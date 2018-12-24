@@ -19,14 +19,15 @@ export enum DefinitionType {
 
 
 export class Thing {
-    CTCs: CTC[];
+    CTCs: { [type: string]: CTC };
     UID: UID;
     DefinitionType: DefinitionType | string;
     type: THING_TYPE | string;
     literalFields: { [key: string]: string } = {}
+    player: string;
 
     public static deserialize(lines: string[]): Thing {
-        let uid, ctcs: CTC[] = [], unknownLines: string[] = [], defType, literalFields = {};
+        let uid, ctcs: any = {}, unknownLines: string[] = [], defType, literalFields = {}, player;
         let type = lines[0].replace(/['";]/g, '').split(' ')[1];
         let remainingLines = lines.slice(1);
         let subsection;
@@ -39,7 +40,7 @@ export class Thing {
             remainingLines = subsection.remainingLines;
             const { sectionLines } = subsection;
             try {
-                ctcs.push(CTC.deserialize(sectionLines));
+                ctcs[subsection.headerTokens[0]] = CTC.deserialize(sectionLines);
             } catch (e) {
                 console.log(e);
             }
@@ -47,13 +48,16 @@ export class Thing {
         // cut off footer
         remainingLines = remainingLines.slice(0, remainingLines.length - 1);
         for (const line of remainingLines) {
-            const tokens = line.replace(/['";]/g, '').split(' ');
+            const tokens = line.replace(/[;]/g, '').split(' ');
             switch (tokens[0]) {
                 case "UID":
                     uid = new UID(UIDType.OBJECT, tokens[1]);
                     break;
                 case "DefinitionType":
                     defType = tokens[1];
+                    break;
+                case "Player":
+                    player = tokens[1];
                     break;
                 default:
                     literalFields[tokens[0]] = tokens.slice(1).join(" ");
@@ -66,16 +70,19 @@ export class Thing {
             uid || new UID(UIDType.ERROR),
             ctcs,
             defType || DefinitionType.NONE,
+            player,
             literalFields
         );
     }
 
     constructor(type: THING_TYPE | string,
         UID: UID,
-        CTCs: CTC[],
+        CTCs: { [type: string]: CTC },
         defType: DefinitionType | string,
+        player: string,
         literalFields: { [key: string]: string }) {
         this.type = type;
+        this.player = player;
         this.UID = UID;
         this.CTCs = CTCs;
         this.literalFields = literalFields;
@@ -87,9 +94,10 @@ export class Thing {
         for (let field in this.literalFields) {
             serializedFields.push(`${field} ${this.literalFields[field]};`);
         }
-        let serializedCTCs: string[] = this.CTCs.map(ctc => ctc.serialize());
+        let serializedCTCs: string[] = Object.keys(this.CTCs).map(type => this.CTCs[type].serialize());
         return [
             `${TNG_FILE_TOKENS.NEWTHING} ${this.type};`,
+            `Player ${this.player};`,
             `UID ${this.UID.objectUID};`,
             `DefinitionType ${this.DefinitionType};`,
             ...serializedFields,

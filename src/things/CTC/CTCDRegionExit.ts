@@ -5,7 +5,7 @@ import { CTC } from "./CTC";
 export class CTCDRegionExit implements CTC {
     EntranceConnectedToUID: UID;
     Active: boolean;
-    serializedKeys: string;
+    serializedKeys: string[];
     constructor(lines: string[]) {
         lines = lines.slice(1, lines.length - 1);
         const unknownLines: string[] = [];
@@ -18,19 +18,19 @@ export class CTCDRegionExit implements CTC {
             } else if (line.includes("Active")) {
                 Active = tokens[1] === "TRUE";
             } else if (line !== '') {
-                unknownLines.push(line);
+                unknownLines.push(tokens.join(' '));
             }
         }
-        this.serializedKeys = unknownLines.join(os.EOL);
+        this.serializedKeys = unknownLines;
         this.EntranceConnectedToUID = new UID(UIDType.CONNECTIVE, EntranceConnectedToUID || "0");
         this.Active = !!Active;
     }
 
     serialize(): string {
         return [
-            "StartCTCDRegionExit;",
-            `EntranceConnectedToUID ${this.EntranceConnectedToUID.connectiveUID};`,
-            this.serializedKeys,
+            "StartCTCDRegionExit",
+            `EntranceConnectedToUID ${this.EntranceConnectedToUID.connectiveUID}`,
+            ...this.serializedKeys,
             "EndCTCDRegionExit;"
         ].join(";" + os.EOL);
     }

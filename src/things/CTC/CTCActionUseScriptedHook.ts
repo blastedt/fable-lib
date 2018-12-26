@@ -9,7 +9,7 @@ export class CTCActionUseScriptedHook {
         const unknownLines: string[] = [];
         let EntranceConnectedToUID: string | undefined;
         for (const line of lines) {
-            const tokens = line.replace(/[;"']/g, '').split(' ');
+            const tokens = line.replace(/[;]/g, '').split(' ');
             if (line.includes("EntranceConnectedToUID")) {
                 EntranceConnectedToUID = tokens[1];
             } else if (line !== '') {
@@ -27,7 +27,7 @@ export class CTCActionUseScriptedHook {
             ? [`EntranceConnectedToUID ${this.EntranceConnectedToUID.connectiveUID}`]
             : [];
         return [
-            "StartCTCActionUseScriptedHook;",
+            "StartCTCActionUseScriptedHook",
             ...entrance,
             ...this.serializedKeys,
             "EndCTCActionUseScriptedHook;"

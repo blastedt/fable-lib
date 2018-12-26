@@ -8,7 +8,9 @@
     "test": "mocha -r ts-node/register spec",
     "tdd": "mocha -w --watch-extensions ts -r ts-node/register spec/**/*ts",
     "build": "tsc",
-    "run": "ts-node main.ts"
+    "run": "ts-node main.ts",
+    "restore": "rm -rf Levels && cp -r Levels.1 Levels",
+    "go": "npm run build && npm run restore && npm run run"
   },
   "repository": {
     "type": "git",

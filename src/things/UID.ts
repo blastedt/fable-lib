@@ -12,14 +12,15 @@ export class UID {
         } else if (type === UIDType.OBJECT) {
             this.objectUID = UID;
         } else {
-            this.objectUID = bigInt(UID, 16)
+            this.objectUID = bigInt(UID)
                 .and(bigInt("000000FFFFFFFFFF", 16))
                 .or(bigInt("FFFFFE0000000000", 16))
                 .toString();
             this._connectiveUID = UID;
-            this._mapID = bigInt(UID, 16)
+            this._mapID = bigInt(UID)
                 .and(bigInt("FFFFFF0000000000", 16))
-                .shiftRight(40);
+                .shiftRight(40)
+                .toString();
         }
     }
 
@@ -38,6 +39,9 @@ export class UID {
     }
 
     get mapID() {
+        if (!this._mapID) {
+            throw new Error("No map id to get");
+        }
         return this._mapID;
     }
 

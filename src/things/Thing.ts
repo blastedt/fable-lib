@@ -3,6 +3,8 @@ import { CTC } from "./CTC/CTC";
 import { UID, UIDType } from "./UID";
 import { grabSubsectionFromLines } from '../util/grab-subsections';
 import { TNG_FILE_TOKENS } from '../models/thing.model';
+import { CTCDRegionExit } from './CTC/CTCDRegionExit';
+import { CTCActionUseScriptedHook } from './CTC/CTCActionUseScriptedHook';
 
 export enum THING_TYPE {
     THING = "Thing",
@@ -107,20 +109,25 @@ export class Thing {
     }
 
     getExit(): UID | null {
-        let res = false;
-        for (const CTCtype in this.CTCs) {
-            if ((this.CTCs[CTCtype] as any).EntranceConnectedToUID) {
-                console.log("Found exit, adding");
-                return (this.CTCs[CTCtype] as any).EntranceConnectedToUID;
-            }
+        let exit;
+        if (this.CTCs["StartCTCDRegionExit;"]) {
+            exit = (this.CTCs["StartCTCDRegionExit;"] as CTCDRegionExit).EntranceConnectedToUID;
+        } else if (this.CTCs["StartCTCActionUseScriptedHook;"]) {
+            exit = (this.CTCs["StartCTCActionUseScriptedHook;"] as CTCActionUseScriptedHook).EntranceConnectedToUID || null;
         }
-        return null;
+        if (exit && exit.mapID == "3485138") {
+            //guild woods is locked in time
+            return null;
+        }
+        return exit || null;
     }
 
     setExit(target: UID): boolean {
         for (const CTCtype in this.CTCs) {
-            if (!!(this.CTCs[CTCtype] as any).EntranceConnectedToUID) {
-                (this.CTCs[CTCtype] as any).EntranceConnectedToUID = target.connectiveUID;
+            if (!!(this.CTCs[CTCtype] as any).EntranceConnectedToUID
+                && (this.CTCs[CTCtype] as any).EntranceConnectedToUID.mapID != "3485138") {
+                //guild woods is locked in time
+                (this.CTCs[CTCtype] as any).EntranceConnectedToUID = target;
                 return true;
             }
         }

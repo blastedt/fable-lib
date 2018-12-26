@@ -12,7 +12,7 @@ export class CTCDRegionExit implements CTC {
         let EntranceConnectedToUID: string | undefined;
         let Active;
         for (const line of lines) {
-            const tokens = line.replace(/[;"']/g, '').split(' ');
+            const tokens = line.replace(/[;]/g, '').split(' ');
             if (line.includes("EntranceConnectedToUID")) {
                 EntranceConnectedToUID = tokens[1];
             } else if (line.includes("Active")) {

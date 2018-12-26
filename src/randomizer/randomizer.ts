@@ -35,10 +35,16 @@ export async function fetchAllThings(directory: string): Promise<ThingPathMap> {
     });
     const promiseMap = {};
     for (const file of filenames) {
+        if (file.includes("GuildWoods")) {
+            continue; //guild woods locked in time
+        }
         promiseMap[file] = ThingFile.deserialize(file);
     }
     const res: ThingPathMap = {};
     for (const file of filenames) {
+        if (file.includes("GuildWoods")) {
+            continue; //guild woods locked in time
+        }
         res[file] = await promiseMap[file];
     }
     return res;

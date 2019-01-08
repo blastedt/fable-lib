@@ -30,7 +30,7 @@ export class UID {
         }
         if (!this._connectiveUID) {
             const shiftedMapID = bigInt(this.mapID).shiftLeft(40);
-            this._connectiveUID = bigInt(this.objectUID, 16)
+            this._connectiveUID = bigInt(this.objectUID)
                 .and(bigInt("000000FFFFFFFFFF", 16))
                 .or(shiftedMapID)
                 .toString();
@@ -56,7 +56,7 @@ export class UID {
 
     get maskedUID(): string {
         if (!this._maskedUID) {
-            this._maskedUID = bigInt(this.objectUID, 16)
+            this._maskedUID = bigInt(this.objectUID)
                 .and(bigInt("000000FFFFFFFFFF", 16))
                 .toString();
         }

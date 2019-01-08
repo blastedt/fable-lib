@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": "true",
   "description": "Parse Fable TLC stuff",
-  "main": "index.js",
+  "main": "dist/src/main.js",
   "scripts": {
     "test": "mocha -r ts-node/register spec",
     "tdd": "mocha -w --watch-extensions ts -r ts-node/register spec/**/*ts",

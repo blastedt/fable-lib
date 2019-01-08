@@ -8,6 +8,7 @@
     /* Strict Type-Checking Options */
     "strict": true, /* Enable all strict type-checking options. */
     "sourceMap": true,
+    "declaration": true,
     "lib": [
       "es2015"
     ],
